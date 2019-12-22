@@ -1,4 +1,4 @@
-# lfu-cache [![Coverage Status](https://coveralls.io/repos/github/AkashBabu/lfu-cache/badge.svg?branch=master)](https://coveralls.io/github/AkashBabu/lfu-cache?branch=master) [![Build Status](https://travis-ci.com/AkashBabu/lfu-cache.svg?branch=master)](https://travis-ci.com/AkashBabu/lfu-cache)
+# lfu-cache [![Coverage Status](https://coveralls.io/repos/github/AkashBabu/lfu-cache/badge.svg?branch=master)](https://coveralls.io/github/AkashBabu/lfu-cache?branch=master) [![Build Status](https://travis-ci.com/AkashBabu/lfu-cache.svg?branch=master)](https://travis-ci.com/AkashBabu/lfu-cache) [![Maintainability](https://api.codeclimate.com/v1/badges/b31fd7f387b54be7a02c/maintainability)](https://codeclimate.com/github/AkashBabu/lfu-cache/maintainability)
 
 LFU cache implementation with a complexity of `O(1)` for all transactions, as described in the paper ["An O(1) algorithm for implementing the LFU cache eviction scheme" by K. Shah, A. Mitra and D. Matani](http://dhruvbird.com/lfu.pdf)
 

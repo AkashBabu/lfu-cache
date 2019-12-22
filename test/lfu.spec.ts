@@ -114,11 +114,11 @@ describe('#LFUCache()', () => {
     it('should update the utime of the nodeItem when the item is accessed', async () => {
       lfu.set('foo', 'bar');
 
-      await delay(60);
+      await delay(70);
 
       lfu.get('foo');
 
-      await delay(60);
+      await delay(40);
 
       expect(lfu.get('foo')).to.be.eql('bar');
       expect(lfu.size).to.be.eql(1);
