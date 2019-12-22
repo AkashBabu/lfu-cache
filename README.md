@@ -10,10 +10,15 @@ What's the motivation behind creating this library(inspite of other currently ex
 
 If you ever wanna peek into the source code, I would suggest you to read the algorithm in above mentioned paper first and then look into code, for better understanding or suggestions.
 
+## Installation
+
+> npm i @akashbabu/lfu-cache -S
 
 ## Example
 
 ```TS
+import LFUCache from '@akashbabu/lfu-cache';
+
 const lfu = new LFUCache<string>();
 
 lfu.set('foo', 'bar');
