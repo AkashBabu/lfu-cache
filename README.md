@@ -85,7 +85,7 @@ Caches the given key-value pair and evicts LFU keys if the cache is full.
 Returns the cached value if present or if NOT expired, else returns `undefined`
 
 
-### .delete(key: string): boolean
+#### .delete(key: string): boolean
 
 Removes the given key from cache. Returns `true` if the given key was present and it has been removed successfully else returns `false`
 
