@@ -26,6 +26,8 @@ jobs:
   include:
     - os: linux
       script: npm run coveralls
+  allow_failures:
+    - os: osx
 
 notifications:
   email:
