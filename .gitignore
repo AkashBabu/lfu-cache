@@ -36,9 +36,6 @@ build/Release
 node_modules/
 jspm_packages/
 
-# TypeScript v1 declaration files
-typings/
-
 # Optional npm cache directory
 .npm
 
@@ -59,3 +56,22 @@ typings/
 
 # next.js build output
 .next
+
+# package lock
+package-lock.json
+
+# VSCode 
+sample.launch.json
+.vscode/
+
+# TODO : uncomment the below line after example app is complete
+# built/
+
+.DS_Store
+
+dist/
+build/
+lib/
+es/
+.cache
+_book/

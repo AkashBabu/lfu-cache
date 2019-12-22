@@ -1,0 +1,11 @@
+version: "2"
+exclude_patterns:
+  - "test/**/*"
+  - "benchmark/**/*"
+  - "build/**/*"
+  - "load/**/*"
+  - "types/**/*"
+  - "example/**/*"
+  - "docs/**/*"
+  - "rollup.config.js"
+  
