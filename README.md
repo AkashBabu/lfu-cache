@@ -56,7 +56,7 @@ console.log(lfu.map<string>(([key, val], i) => `${i + 1}) ${key} -> ${val}`))
 
 ## API Documentation
 
-#### new LFUCache<T>(options? = {})
+#### new LFUCache\<T>(options? = {})
 
 Instantiates LFU cache
 
