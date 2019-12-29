@@ -1,6 +1,6 @@
 {
   "name": "@akashbabu/lfu-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "LFU cache implementation with a complexity of `O(1)` for all transactions",
   "sideEffects": false,
   "main": "lib/lfuCache.js",
