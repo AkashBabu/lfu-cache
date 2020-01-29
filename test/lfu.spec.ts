@@ -263,6 +263,49 @@ describe('#LFUCache()', () => {
       expect(lfu.size).to.be.eql(1);
     });
 
+    // This test case was submitted in #1
+    it('should never be more than the max size specified', () => {
+      const cache = new LFUCache<number|string>({max: 100});
+
+      // Generate random number
+      const random = (min: number, max: number) => Math.round(Math.random() * (max - min)) + min;
+
+      const cacheFunc = (key: string, value: number | string) => {
+        if (typeof cache.peek(key) !== 'undefined') return cache.get(key);
+        cache.set(key, value);
+        return value;
+      };
+
+      //  "cold" will be called only once
+      cacheFunc('cold', '123');
+      // "hot" will be called for 20 times
+      for (let i = 1; i <= 20; i++) {
+        cacheFunc('hot', '456');
+      }
+
+      // Let the cache size limit exceeded
+      for (let i = 1; i <= 200; i++) {
+        // all of them will be called three times
+        cacheFunc(String(100 + i), random(100, 900));
+        cacheFunc(String(100 + i), random(100, 900));
+        cacheFunc(String(100 + i), random(100, 900));
+      }
+
+      // "new" will be called once
+      cacheFunc('new', '123');
+
+      // Should be 789 not 123, because the cold cache will be removed from the cache.
+      expect(cacheFunc('cold', '789')).to.be.eql('789');
+
+      // Should be 456 not 789, because it is hot and remains in the cache.
+      expect(cacheFunc('hot', '789')).to.be.eql('456');
+
+      // Should be 123 not 789, because it is a new item added to the cache.
+      expect(cacheFunc('new', '123')).to.be.eql('123');
+
+      expect(cache.size).to.be.eql(100);
+    });
+
   });
 
   describe('clear()', () => {
@@ -281,11 +324,11 @@ describe('#LFUCache()', () => {
       this.timeout(50 * 1000);
 
       const SIZE = 10000;
-      const lfu = new LFUCache<string>({max: SIZE + 1});
+      const lfu = new LFUCache<string>({ max: SIZE + 1 });
 
       for (let i = 0; i < 1000; ++i) {
         for (let j = 0; j < SIZE; ++j) {
-          lfu.set('foo', 'bar');
+          lfu.set('foo' + j, 'bar');
         }
 
         expect(lfu.size).to.be.eql(SIZE);
