@@ -3,7 +3,7 @@ import { IState, IOptions, IOptionArg, INodeListItem, IFreqListItem, IIteratorCb
 
 interface ILFUCache<T> {
   readonly size: number;
-  set(key: string, value: T): void;
+  set(key: string, value: T): T;
   get(key: string): T | undefined;
   delete(key: string): boolean;
   peek(key: string): T | undefined;
@@ -51,14 +51,13 @@ export default class LFUCache<T> implements ILFUCache<T> {
    * @param key Key
    * @param value Value to be caches against the provided key
    */
-  public set(key: string, value: T) {
+  public set(key: string, value: T): T {
 
     // for duplicate entry / updating
     // remove the current entry
     // and create a new entry in the cache
     if (this.state.byKey.get(key)) {
-      this.delete(key);
-      this.set(key, value);
+      return (this.state.byKey.get(key) as DLLItem<INodeListItem<T>>).data.value;
     }
 
     this.state.size++;
@@ -79,6 +78,8 @@ export default class LFUCache<T> implements ILFUCache<T> {
     if (this.state.size > this.options.max) {
       this.evict(this.options.evictCount);
     }
+
+    return value;
   }
 
   /**
@@ -302,7 +303,7 @@ export default class LFUCache<T> implements ILFUCache<T> {
     if (!freqListHead || freqListHead.data.value !== 1) {
       this.state.freqList.unshift({
         value: 1,
-        items: new Set<string>(key),
+        items: new Set<string>([key]),
       });
     } else {
       freqListHead.data.items.add(key);

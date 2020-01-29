@@ -1,7 +1,7 @@
 import { IState, IOptionArg, IIteratorCb } from './interfaces';
 interface ILFUCache<T> {
     readonly size: number;
-    set(key: string, value: T): void;
+    set(key: string, value: T): T;
     get(key: string): T | undefined;
     delete(key: string): boolean;
     peek(key: string): T | undefined;
@@ -31,7 +31,7 @@ export default class LFUCache<T> implements ILFUCache<T> {
      * @param key Key
      * @param value Value to be caches against the provided key
      */
-    set(key: string, value: T): void;
+    set(key: string, value: T): T;
     /**
      * Returns cached value for the provided key
      * if one exists, else returns undefined
