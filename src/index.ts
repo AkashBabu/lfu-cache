@@ -1,9 +1,16 @@
 import { DLL, DLLItem } from '@akashbabu/node-dll';
-import { IState, IOptions, IOptionArg, INodeListItem, IFreqListItem, IIteratorCb } from './interfaces';
+import {
+  IState,
+  IOptions,
+  IOptionArg,
+  INodeListItem,
+  IFreqListItem,
+  IIteratorCb,
+} from './interfaces';
 
 interface ILFUCache<T> {
   readonly size: number;
-  set(key: string, value: T): T;
+  set(key: string, value: T, force?: boolean): T;
   get(key: string): T | undefined;
   delete(key: string): boolean;
   peek(key: string): T | undefined;
@@ -46,18 +53,28 @@ export default class LFUCache<T> implements ILFUCache<T> {
    * const lfu = new LFUCache<string>();
    *
    * lfu.set('key', 'value');
+   * lfu.set('key', 'value1', true);
    * ```
    *
    * @param key Key
    * @param value Value to be caches against the provided key
+   * @param force Replaces the existing value if any, else will add the value to cache
    */
-  public set(key: string, value: T): T {
+  public set(key: string, value: T, force?: boolean): T {
+    const existingValue = this.state.byKey.get(key);
 
     // for duplicate entry / updating
     // remove the current entry
     // and create a new entry in the cache
-    if (this.state.byKey.get(key)) {
-      return (this.state.byKey.get(key) as DLLItem<INodeListItem<T>>).data.value;
+    if (existingValue) {
+      if (force) {
+        // if set by force, then replace only the existing value
+        // with the new one without touching size, frequency or nodeList
+        existingValue.data.value = value;
+        return value;
+      } else {
+        return existingValue.data.value;
+      }
     }
 
     this.state.size++;
@@ -105,7 +122,7 @@ export default class LFUCache<T> implements ILFUCache<T> {
     if (!nodeListItem) return undefined;
 
     if (this.options.maxAge) {
-      if ((nodeListItem.data.utime + this.options.maxAge) < Date.now()) {
+      if (nodeListItem.data.utime + this.options.maxAge < Date.now()) {
         this.delete(key);
         return;
       }
@@ -122,13 +139,12 @@ export default class LFUCache<T> implements ILFUCache<T> {
     // if the next freq item value is not as expected,
     // then create a new one with the expected freq value
     if (!nextFreqListItem || nextFreqListItem.data.value !== nextFreqValue) {
-
       // create a new freq item list and append it
       // after the curr freq item and add the
       // requested key to freq items list
       nextFreqListItem = this.state.freqList.appendAfter(freqListItem, {
         value: freqListItem.data.value + 1,
-        items: new Set(key),
+        items: new Set([key]),
       });
     } else {
       // add requested key to the next freq list item
@@ -185,7 +201,6 @@ export default class LFUCache<T> implements ILFUCache<T> {
     }
 
     return false;
-
   }
 
   /**
@@ -273,7 +288,10 @@ export default class LFUCache<T> implements ILFUCache<T> {
     };
   }
 
-  private removeKeyFromFreqItem(freqListItem: DLLItem<IFreqListItem>, key: string) {
+  private removeKeyFromFreqItem(
+    freqListItem: DLLItem<IFreqListItem>,
+    key: string,
+  ) {
     // remove the requested key from the current parent
     freqListItem.data.items.delete(key);
 
@@ -311,4 +329,21 @@ export default class LFUCache<T> implements ILFUCache<T> {
 
     return this.state.freqList.head as DLLItem<IFreqListItem>;
   }
+}
+
+if (require.main === module) {
+  const SIZE = 3;
+  const lfu = new LFUCache<string>({ max: SIZE });
+
+  new Array(SIZE).fill(0).forEach((_, i) => {
+    lfu.set(`foo_${i + 1}`, `bar_${i + 1}`);
+  });
+
+  // Increment the access frequency
+  lfu.get('foo_1');
+
+  lfu.set('foo_1', 'bar_1_2', true);
+
+  lfu.set('foo_4', 'bar_4');
+  lfu.set('foo_5', 'bar_5');
 }
